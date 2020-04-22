@@ -10,19 +10,26 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Line line = new Line(10,10,30,30);
 
-        //Creating a Group
         Group root = new Group();
-        root.getChildren().add(line);
+        Graph valami = new Graph(2);
 
-        stage.setScene(new Scene(root, 800, 600));
+        Line line;
+        for(int i = 0; i < valami.getLineList().size(); i++){
+            line = new Line(valami.getLineList().get(i).getStart().getXCoordinate(),
+                            valami.getLineList().get(i).getStart().getYCoordinate(),
+                            valami.getLineList().get(i).getEnd().getXCoordinate(),
+                            valami.getLineList().get(i).getEnd().getYCoordinate());
+            root.getChildren().add(line);
+        }
+
+        stage.setScene(new Scene(root, 1000, 1000));
         stage.show();
     }
 
     public static void main(String[] args) {
 
-        Graph valami = new Graph(1);
+
 
         launch(args);
 
