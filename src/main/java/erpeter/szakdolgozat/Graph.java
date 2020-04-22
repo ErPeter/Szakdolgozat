@@ -22,37 +22,13 @@ public class Graph {
     private List<Point> pointList = new ArrayList<>();
     private List<MyLine> lineList = new ArrayList<>();
 
-    public Graph() {
-    }
 
-    public Graph createGraph(int graphNumber){
-        Graph graph = new Graph();
-        Point point;
-        String[] points = find(graphNumber).getPoints().split(",");
-        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        for(int i = 0; i < points.length; i++){
-            String[] coordinates;
-            String pointID = Character.toString(alphabet[i]);
-            coordinates = points[i].split("&");
-            point = new Point(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
-            point.setName(pointID.toUpperCase());
-            pointList.add(point);
-        }
-        for (Point value : pointList) {
-            System.out.println(value.getName() + value.getXCoordinate() + " , " + value.getYCoordinate());
-        }
-        //String[] lines;
-        return graph;
-    }
-
-    private Graph find(int identity) {
+    public Graph (int identity) {
 
         Connection connection = DatabaseHelper.createConnection();
 
-        String query = "SELECT * FROM graph where ID = " + identity;
+        var query = "SELECT * FROM graph where ID = " + identity;
 
-
-        Graph graph = new Graph();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -60,33 +36,51 @@ public class Graph {
             while (resultSet.next()) {
 
 
-                int ID = resultSet.getInt("id");
-                String points = resultSet.getString("points");
-                String line = resultSet.getString("line");
-                int centerX = resultSet.getInt("centerx");
-                int centerY = resultSet.getInt("centery");
-
-                graph.setID(ID);
-                graph.setPoints(points);
-                graph.setLine(line);
-                graph.setGraphCenterX(centerX);
-                graph.setGraphCenterY(centerY);
-
+                this.ID = resultSet.getInt("id");
+                this.points= resultSet.getString("points");
+                this.line = resultSet.getString("line");
+                this.graphCenterX = resultSet.getInt("centerx");
+                this.graphCenterY = resultSet.getInt("centery");
             }
         }catch (SQLException e){
             e.printStackTrace();
         }
-
         DatabaseHelper.closeConnection(connection);
 
-        System.out.println(graph);
+            Point point;
+            String[] points = this.points.split(",");
+            char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+            for(int i = 0; i < points.length; i++){
+                String[] coordinates;
+                coordinates = points[i].split("&");
+                point = new Point(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
+                String pointID = Character.toString(alphabet[i]);
+                point.setName(pointID);
+                pointList.add(point);
+            }
 
-        return graph;
+            MyLine myLine;
+            String[] lines = line.split(",");
+            for(int i = 0; i < lines.length; i++){
+                String[] endAndStartPoint = lines[i].split("");
+                myLine = new MyLine(getPointFromList(endAndStartPoint[0]), getPointFromList(endAndStartPoint[1]));
+                lineList.add(myLine);
+            }
+    }
+
+    private Point getPointFromList(String pointName){
+        for (int i = 0; i < pointList.size(); i++){
+            String name = pointList.get(i).getName();
+            if (pointName.equals(name)){
+                return pointList.get(i);
+            }
+        }
+        return null;
     }
 
 
     @Override
     public String toString() {
-        return String.format(ID + " Points: " + points + " Lines: " + line + " graph center x coordinate : "+ graphCenterX + " graph center y coordinate : " + graphCenterY);
+        return ID + " Points: " + points + " Lines: " + line + " graph center x coordinate : "+ graphCenterX + " graph center y coordinate : " + graphCenterY;
     }
 }

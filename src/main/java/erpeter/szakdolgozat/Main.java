@@ -22,9 +22,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        Graph valami = new Graph();
-
-        valami = valami.createGraph(1);
+        Graph valami = new Graph(1);
 
         launch(args);
 
