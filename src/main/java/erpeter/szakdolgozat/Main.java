@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
 
         Group root = new Group();
-        Graph valami = new Graph(2);
+        Graph valami = new Graph(1);
 
         Line line;
         for(int i = 0; i < valami.getLineList().size(); i++){
@@ -28,6 +28,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+
 
 
 

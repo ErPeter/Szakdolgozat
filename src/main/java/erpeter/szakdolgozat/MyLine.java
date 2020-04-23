@@ -11,7 +11,6 @@ public class MyLine {
     private Point end;
     private List<Point> intersections = new ArrayList<>();
     private Line2D line;
-    //normal vector coordinates of the line
 
 
 
@@ -24,7 +23,7 @@ public class MyLine {
 
     public boolean intersectLines(MyLine line){
         if(this.line.intersectsLine(line.line)){
-            intersections.add(intersectionPoint(line));
+//            intersections.add(intersectionPoint(line));
             return true;
         }
         return false;
