@@ -10,17 +10,30 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+
 public class Graph {
 
+    @Getter
+    @Setter
     private int ID;
+
+    @Getter
+    @Setter
     private double wrongness;
+
     private String points;
     private String line;
-    private int graphCenterX;
-    private int graphCenterY;
+    @Getter
+    private double graphCenterX;
+    @Getter
+    private double graphCenterY;
+
+    @Getter
+    @Setter
     private List<Point> pointList = new ArrayList<>();
+
+    @Getter
+    @Setter
     private List<MyLine> lineList = new ArrayList<>();
 
 //crates the graph from the database and sets every variable into the start position
@@ -126,6 +139,22 @@ public class Graph {
                 }
             }
         }
+    }
+
+    public void determinateCenter(){
+        double x = 0, y = 0;
+
+        for (Point point : this.pointList) {
+            x += point.getXCoordinate();
+            y += point.getYCoordinate();
+        }
+
+        x /= this.pointList.size();
+        y /= this.pointList.size();
+
+
+        this.graphCenterX = x;
+        this.graphCenterY = y;
     }
 
     //Calculates the secondary value for every point
