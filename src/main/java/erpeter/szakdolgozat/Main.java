@@ -18,29 +18,32 @@ public class Main extends Application {
         System.out.println(valami.getGraphCenterX() + "," + valami.getGraphCenterY());
 
 
-        Line line;
-        for(int i = 0; i < valami.getLineList().size(); i++){
-            line = new Line(valami.getLineList().get(i).getStart().getXCoordinate(),
-                            valami.getLineList().get(i).getStart().getYCoordinate(),
-                            valami.getLineList().get(i).getEnd().getXCoordinate(),
-                            valami.getLineList().get(i).getEnd().getYCoordinate());
-            root.getChildren().add(line);
-        }
+
 
         SolvingAlgorithm solv = new SolvingAlgorithm(valami);
 
         solv.creatingCirclePoints(valami);
-
-        Circle circleCenter = new Circle(valami.getGraphCenterX(),valami.getGraphCenterY(), 3);
-        root.getChildren().add(circleCenter);
-
-        double rad = 3;
-        Circle circle;
-        for(int i = 0; i < solv.getCircleOptions().size(); i++){
-            System.out.println(solv.getCircleOptions().get(i).getXCoordinate() + " , " +solv.getCircleOptions().get(i).getYCoordinate());
-            circle = new Circle(solv.getCircleOptions().get(i).getXCoordinate(),solv.getCircleOptions().get(i).getYCoordinate(), rad);
-            root.getChildren().add(circle);
+        solv.solve();
+        for (int i = 0; i < solv.getGraphOptions().get(0).getPointList().size(); i++){
+            System.out.println("name: " + solv.getGraphOptions().get(0).getPointList().get(i).getName() +
+                                " X: "+ solv.getGraphOptions().get(0).getPointList().get(i).getXCoordinate() +
+                                " Y: " + solv.getGraphOptions().get(0).getPointList().get(i).getYCoordinate());
         }
+        System.out.println(solv.getCurrentState().getPointList().get(0).getXCoordinate() + " "+ solv.getCurrentState().getPointList().get(0).getYCoordinate());
+        System.out.println(solv.getWorstPoint().getName() + " " + solv.getWorstPoint().getXCoordinate() + " " + solv.getWorstPoint().getYCoordinate());
+
+        Circle circle = new Circle(solv.getCurrentState().getPointList().get(0).getXCoordinate(),solv.getCurrentState().getPointList().get(0).getYCoordinate(), 3);
+        root.getChildren().add(circle);
+
+        Line line;
+        for(int i = 0; i < solv.getGraphOptions().get(0).getLineList().size(); i++){
+            line = new Line(solv.getGraphOptions().get(0).getLineList().get(i).getStart().getXCoordinate(),
+                    solv.getGraphOptions().get(0).getLineList().get(i).getStart().getYCoordinate(),
+                    solv.getGraphOptions().get(0).getLineList().get(i).getEnd().getXCoordinate(),
+                    solv.getGraphOptions().get(0).getLineList().get(i).getEnd().getYCoordinate());
+            root.getChildren().add(line);
+        }
+
 
         stage.setScene(new Scene(root, 1000, 1000));
         stage.show();

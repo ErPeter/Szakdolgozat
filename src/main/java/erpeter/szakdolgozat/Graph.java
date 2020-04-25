@@ -37,6 +37,8 @@ public class Graph {
     private List<MyLine> lineList = new ArrayList<>();
 
 //crates the graph from the database and sets every variable into the start position
+    public Graph(){}
+
     public Graph (int identity) {
 
         Connection connection = DatabaseHelper.createConnection();
