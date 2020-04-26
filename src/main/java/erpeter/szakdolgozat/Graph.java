@@ -36,14 +36,15 @@ public class Graph {
     @Setter
     private List<MyLine> lineList = new ArrayList<>();
 
-//crates the graph from the database and sets every variable into the start position
-    public Graph(){}
+    //crates the graph from the database and sets every variable into the start position
+    public Graph() {
+    }
 
-    public Graph (int identity) {
+    public Graph(int identity) {
         start(identity);
     }
 
-    private void start(int identity){
+    private void start(int identity) {
 
         Connection connection = DatabaseHelper.createConnection();
 
@@ -56,10 +57,10 @@ public class Graph {
             while (resultSet.next()) {
 
                 this.ID = resultSet.getInt("id");
-                this.points= resultSet.getString("points");
+                this.points = resultSet.getString("points");
                 this.line = resultSet.getString("line");
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         DatabaseHelper.closeConnection(connection);
@@ -68,7 +69,7 @@ public class Graph {
         String[] points = this.points.split(",");
         char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
-        for(int i = 0; i < points.length; i++){
+        for (int i = 0; i < points.length; i++) {
 
             String[] coordinates;
             coordinates = points[i].split("&");
@@ -92,8 +93,8 @@ public class Graph {
         calculateWrongness();
     }
 
-//    Calculates how wrong is the graph, by summing the primary values and add 0.secondary value of all points of the graph.
-    public void  calculateWrongness(){
+    //    Calculates how wrong is the graph, by summing the primary values and add 0.secondary value of all points of the graph.
+    public void calculateWrongness() {
         this.wrongness = 0;
         int prim = 0;
         double sec = 0.0;
@@ -102,30 +103,30 @@ public class Graph {
             prim += point.getPrimaryPlaceValue();
             sec += point.getSecondaryPlaceValue();
         }
-        helper = (int)(Math.log10(sec)+1);
-        if(sec != 0) {
+        helper = (int) (Math.log10(sec) + 1);
+        if (sec != 0) {
             sec = sec / (Math.pow(10, helper));
         }
         this.wrongness = (double) prim + sec;
     }
 
-    public void refreshWrongness(){
+    public void refreshWrongness() {
 
-        for(int i = 0; i < pointList.size(); i++){
+        for (Point point : pointList) {
 
-            this.pointList.get(i).setPrimaryPlaceValue(0);
-            this.pointList.get(i).setSecondaryPlaceValue(0);
+            point.setPrimaryPlaceValue(0);
+            point.setSecondaryPlaceValue(0);
         }
-        for(int i = 0; i < lineList.size(); i++){
-            lineList.get(i).refreshLine();
+        for (MyLine myLine : lineList) {
+            myLine.refreshLine();
         }
-            calculatingPrimaryPlaceValues();
-            calculatingSecondaryPlaceValues();
-            calculateWrongness();
+        calculatingPrimaryPlaceValues();
+        calculatingSecondaryPlaceValues();
+        calculateWrongness();
     }
 
     //finds the point with the ID of searched pointName
-    private Point getPointFromList(String pointName){
+    private Point getPointFromList(String pointName) {
         for (Point point : pointList) {
 
             String name = point.getName();
@@ -138,21 +139,21 @@ public class Graph {
     }
 
     //Calculates the primary value for every point
-    private void calculatingPrimaryPlaceValues(){
+    private void calculatingPrimaryPlaceValues() {
         Point start;
         Point end;
 
-        for(int i = 0; i < lineList.size(); i++){
+        for (int i = 0; i < lineList.size(); i++) {
 
             start = lineList.get(i).getStart();
             end = lineList.get(i).getEnd();
-            for (int iter = 0; iter < lineList.size(); iter++ ) {
+            for (MyLine myLine : lineList) {
 
-                if ((!start.equals(lineList.get(iter).getStart())) && !start.equals(lineList.get(iter).getEnd())) {
+                if ((!start.equals(myLine.getStart())) && !start.equals(myLine.getEnd())) {
 
-                    if ((!end.equals(lineList.get(iter).getStart())) && !end.equals(lineList.get(iter).getEnd())) {
+                    if ((!end.equals(myLine.getStart())) && !end.equals(myLine.getEnd())) {
 
-                        if (lineList.get(i).intersectLines(lineList.get(iter))) {
+                        if (lineList.get(i).intersectLines(myLine)) {
 
                             lineList.get(i).getStart().setPrimaryPlaceValue(lineList.get(i).getStart().getPrimaryPlaceValue() + 1);
                             lineList.get(i).getEnd().setPrimaryPlaceValue(lineList.get(i).getEnd().getPrimaryPlaceValue() + 1);
@@ -164,9 +165,8 @@ public class Graph {
     }
 
 
-
     //Calculates the secondary value for every point
-    private void calculatingSecondaryPlaceValues(){
+    private void calculatingSecondaryPlaceValues() {
         Point point;
         for (Point value : this.pointList) {
             point = value;
@@ -182,7 +182,7 @@ public class Graph {
     }
 
 
-    public void determinateCenter(){
+    public void determinateCenter() {
         double x = 0, y = 0;
 
         for (Point point : this.pointList) {
@@ -199,9 +199,8 @@ public class Graph {
     }
 
 
-
     @Override
     public String toString() {
-        return ID + " Points: " + points + " Lines: " + line + " graph center x coordinate : "+ graphCenterX + " graph center y coordinate : " + graphCenterY;
+        return ID + " Points: " + points + " Lines: " + line + " graph center x coordinate : " + graphCenterX + " graph center y coordinate : " + graphCenterY;
     }
 }

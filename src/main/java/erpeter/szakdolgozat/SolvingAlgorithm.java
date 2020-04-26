@@ -33,16 +33,14 @@ public class SolvingAlgorithm {
 
 
     public void solve() {
-        double originalX = this.worstPoint.getXCoordinate();
-        double originalY = this.worstPoint.getYCoordinate();
 
-        if(this.currentState.getLineList().size() <= (3 * currentState.getPointList().size()) - 6) {
+        if (this.currentState.getLineList().size() <= (3 * currentState.getPointList().size()) - 6) {
 
             while (currentState.getWrongness() != 0) {
                 findBestPoint();
 
-                int placeIndexLine = lineOptions.size() -1;
-                int placeIndexCircle = circleOptions.size() -1;
+                int placeIndexLine = lineOptions.size() - 1;
+                int placeIndexCircle = circleOptions.size() - 1;
                 double minWrongnessLine = currentState.getWrongness();
                 double minWrongnessCircle = currentState.getWrongness();
                 creatingPointsOnLine(this.worstPoint, this.bestPoint);
@@ -73,9 +71,11 @@ public class SolvingAlgorithm {
 
                     if (minWrongnessCircle + 0.4 < minWrongnessLine) {
                         replacePoint(this.worstPoint, this.circleOptions.get(placeIndexCircle).getXCoordinate(), this.circleOptions.get(placeIndexCircle).getYCoordinate());
+                        solution.add(this.worstPoint);
                         System.out.println("circle");
                     } else {
                         replacePoint(this.worstPoint, this.lineOptions.get(placeIndexLine).getXCoordinate(), this.lineOptions.get(placeIndexLine).getYCoordinate());
+                        solution.add(this.worstPoint);
                     }
                 }
 
@@ -87,39 +87,37 @@ public class SolvingAlgorithm {
                 findWorstPoint();
                 System.out.println(this.worstPoint.getName());
             }
-        }
-        else System.out.println("You can not draw in this graph on to a plane");
+        } else System.out.println("You can not draw in this graph on to a plane");
     }
 
 
-
-    public void creatingCirclePoints(Graph currentStage){
+    public void creatingCirclePoints(Graph currentStage) {
         currentStage.determinateCenter();
         Point circlePoint;
         int numberOfPoints = currentStage.getPointList().size();
         double maxRad = 0.0;
 
 
-        for (int i = 0; i < currentStage.getPointList().size(); i++){
+        for (int i = 0; i < currentStage.getPointList().size(); i++) {
             double temp;
-            temp = sqrt(Math.pow(currentStage.getPointList().get(i).getXCoordinate() - currentStage.getGraphCenterX(),2) +
-                    Math.pow(currentStage.getPointList().get(i).getYCoordinate() - currentStage.getGraphCenterY(),2));
-            if (temp > maxRad){
+            temp = sqrt(Math.pow(currentStage.getPointList().get(i).getXCoordinate() - currentStage.getGraphCenterX(), 2) +
+                    Math.pow(currentStage.getPointList().get(i).getYCoordinate() - currentStage.getGraphCenterY(), 2));
+            if (temp > maxRad) {
                 maxRad = temp;
             }
         }
         maxRad = maxRad * 1.3;
-        for(int i = 0; i < numberOfPoints *2; i++){
-            double alpha = 360/(double) (numberOfPoints *2);
+        for (int i = 0; i < numberOfPoints * 2; i++) {
+            double alpha = 360 / (double) (numberOfPoints * 2);
             alpha = alpha * (i + 1);
-            alpha = alpha * PI/180;
-            circlePoint = new Point((currentStage.getGraphCenterX() + maxRad*cos(alpha)),
-                    currentStage.getGraphCenterY() + maxRad*sin(alpha));
+            alpha = alpha * PI / 180;
+            circlePoint = new Point((currentStage.getGraphCenterX() + maxRad * cos(alpha)),
+                    currentStage.getGraphCenterY() + maxRad * sin(alpha));
             circleOptions.add(circlePoint);
         }
     }
 
-    public void creatingPointsOnLine(Point start, Point end){
+    public void creatingPointsOnLine(Point start, Point end) {
         lineOptions.clear();
         double deltaX, deltaY;
         deltaX = (start.getXCoordinate() - end.getXCoordinate()) / 80;
@@ -127,23 +125,21 @@ public class SolvingAlgorithm {
 
         Point linePoint;
 
-        for(int i = 0; i < 80; i++){
-            linePoint = new Point(start.getXCoordinate() - (deltaX * i)+0.4, start.getYCoordinate() - (deltaY * i)+0.4);
-            if(i > 0 && i < 80) {
+        for (int i = 0; i < 80; i++) {
+            linePoint = new Point(start.getXCoordinate() - (deltaX * i) + 0.4, start.getYCoordinate() - (deltaY * i) + 0.4);
+            if (i > 0 && i < 80) {
                 this.lineOptions.add(linePoint);
             }
         }
     }
 
-    private void worstPointListFiller(){
-        for (int i = 0; i < currentState.getPointList().size(); i++){
-            worstPoints.add(currentState.getPointList().get(i));
-        }
+    private void worstPointListFiller() {
+        worstPoints.addAll(currentState.getPointList());
     }
 
-    public void findWorstPoint(){
+    public void findWorstPoint() {
         int worstPos = 0;
-        if(!worstPoints.isEmpty()) {
+        if (!worstPoints.isEmpty()) {
             for (int i = 0; i < worstPoints.size(); i++) {
                 if (worstPoints.get(i).getPrimaryPlaceValue() == worstPoints.get(worstPos).getPrimaryPlaceValue()) {
                     if (worstPoints.get(i).getSecondaryPlaceValue() > worstPoints.get(worstPos).getSecondaryPlaceValue()) {
@@ -155,16 +151,16 @@ public class SolvingAlgorithm {
             }
             this.worstPoint = worstPoints.get(worstPos);
             worstPoints.remove(this.worstPoint);
-        }else{
+        } else {
             worstPointListFiller();
             findWorstPoint();
         }
     }
 
-    public void worstPointLines(){
+    public void worstPointLines() {
         List<MyLine> helper = new ArrayList<>();
-        for(int i = 0; i < currentState.getLineList().size(); i++){
-            if(currentState.getLineList().get(i).getStart().equals(this.worstPoint) || currentState.getLineList().get(i).getEnd().equals(this.worstPoint)){
+        for (int i = 0; i < currentState.getLineList().size(); i++) {
+            if (currentState.getLineList().get(i).getStart().equals(this.worstPoint) || currentState.getLineList().get(i).getEnd().equals(this.worstPoint)) {
                 helper.add(currentState.getLineList().get(i));
             }
         }
@@ -181,7 +177,8 @@ public class SolvingAlgorithm {
             }
         }
     }
-    public void findBestPoint(){
+
+    public void findBestPoint() {
 
         for (MyLine myLine : worstPointLineList) {
             if (!this.worstPoint.equals(myLine.getStart())) {
@@ -202,7 +199,7 @@ public class SolvingAlgorithm {
         }
     }
 
-    public void replacePoint(Point point, double x, double y){
-        point.setCoordinates(x,y);
+    public void replacePoint(Point point, double x, double y) {
+        point.setCoordinates(x, y);
     }
 }
