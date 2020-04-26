@@ -13,34 +13,23 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
 
         Group root = new Group();
-        Graph valami = new Graph(1);
+        Graph valami = new Graph(5);
         valami.determinateCenter();
-        System.out.println(valami.getGraphCenterX() + "," + valami.getGraphCenterY());
-
-
-
 
         SolvingAlgorithm solv = new SolvingAlgorithm(valami);
 
         solv.creatingCirclePoints(valami);
         solv.solve();
-        for (int i = 0; i < solv.getGraphOptions().get(0).getPointList().size(); i++){
-            System.out.println("name: " + solv.getGraphOptions().get(0).getPointList().get(i).getName() +
-                                " X: "+ solv.getGraphOptions().get(0).getPointList().get(i).getXCoordinate() +
-                                " Y: " + solv.getGraphOptions().get(0).getPointList().get(i).getYCoordinate());
-        }
-        System.out.println(solv.getCurrentState().getPointList().get(0).getXCoordinate() + " "+ solv.getCurrentState().getPointList().get(0).getYCoordinate());
-        System.out.println(solv.getWorstPoint().getName() + " " + solv.getWorstPoint().getXCoordinate() + " " + solv.getWorstPoint().getYCoordinate());
 
         Circle circle = new Circle(solv.getCurrentState().getPointList().get(0).getXCoordinate(),solv.getCurrentState().getPointList().get(0).getYCoordinate(), 3);
         root.getChildren().add(circle);
 
         Line line;
-        for(int i = 0; i < solv.getGraphOptions().get(0).getLineList().size(); i++){
-            line = new Line(solv.getGraphOptions().get(0).getLineList().get(i).getStart().getXCoordinate(),
-                    solv.getGraphOptions().get(0).getLineList().get(i).getStart().getYCoordinate(),
-                    solv.getGraphOptions().get(0).getLineList().get(i).getEnd().getXCoordinate(),
-                    solv.getGraphOptions().get(0).getLineList().get(i).getEnd().getYCoordinate());
+        for(int i = 0; i < solv.getCurrentState().getLineList().size(); i++){
+            line = new Line(solv.getCurrentState().getLineList().get(i).getStart().getXCoordinate(),
+                    solv.getCurrentState().getLineList().get(i).getStart().getYCoordinate(),
+                    solv.getCurrentState().getLineList().get(i).getEnd().getXCoordinate(),
+                    solv.getCurrentState().getLineList().get(i).getEnd().getYCoordinate());
             root.getChildren().add(line);
         }
 
@@ -50,9 +39,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-
-
-
 
         launch(args);
 

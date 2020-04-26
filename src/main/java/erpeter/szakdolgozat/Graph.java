@@ -40,6 +40,10 @@ public class Graph {
     public Graph(){}
 
     public Graph (int identity) {
+        start(identity);
+    }
+
+    private void start(int identity){
 
         Connection connection = DatabaseHelper.createConnection();
 
@@ -60,22 +64,22 @@ public class Graph {
         }
         DatabaseHelper.closeConnection(connection);
 
-            Point point;
-            String[] points = this.points.split(",");
-            char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        Point point;
+        String[] points = this.points.split(",");
+        char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
-            for(int i = 0; i < points.length; i++){
+        for(int i = 0; i < points.length; i++){
 
-                String[] coordinates;
-                coordinates = points[i].split("&");
-                point = new Point(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
-                String pointID = Character.toString(alphabet[i]);
-                point.setName(pointID);
-                pointList.add(point);
-            }
+            String[] coordinates;
+            coordinates = points[i].split("&");
+            point = new Point(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
+            String pointID = Character.toString(alphabet[i]);
+            point.setName(pointID);
+            pointList.add(point);
+        }
 
-            MyLine myLine;
-            String[] lines = line.split(",");
+        MyLine myLine;
+        String[] lines = line.split(",");
 
         for (String s : lines) {
 
@@ -83,14 +87,14 @@ public class Graph {
             myLine = new MyLine(getPointFromList(endAndStartPoint[0]), getPointFromList(endAndStartPoint[1]));
             lineList.add(myLine);
         }
-            calculatingPrimaryPlaceValues();
-            calculatingSecondaryPlaceValues();
-            calculateWrongness();
-
+        calculatingPrimaryPlaceValues();
+        calculatingSecondaryPlaceValues();
+        calculateWrongness();
     }
 
 //    Calculates how wrong is the graph, by summing the primary values and add 0.secondary value of all points of the graph.
     public void  calculateWrongness(){
+        this.wrongness = 0;
         int prim = 0;
         double sec = 0.0;
         int helper;
@@ -99,9 +103,25 @@ public class Graph {
             sec += point.getSecondaryPlaceValue();
         }
         helper = (int)(Math.log10(sec)+1);
-        sec = sec/(Math.pow(10, helper));
+        if(sec != 0) {
+            sec = sec / (Math.pow(10, helper));
+        }
         this.wrongness = (double) prim + sec;
+    }
 
+    public void refreshWrongness(){
+
+        for(int i = 0; i < pointList.size(); i++){
+
+            this.pointList.get(i).setPrimaryPlaceValue(0);
+            this.pointList.get(i).setSecondaryPlaceValue(0);
+        }
+        for(int i = 0; i < lineList.size(); i++){
+            lineList.get(i).refreshLine();
+        }
+            calculatingPrimaryPlaceValues();
+            calculatingSecondaryPlaceValues();
+            calculateWrongness();
     }
 
     //finds the point with the ID of searched pointName
@@ -122,26 +142,45 @@ public class Graph {
         Point start;
         Point end;
 
-        for(int i = 0; i < this.lineList.size(); i++){
+        for(int i = 0; i < lineList.size(); i++){
 
-            start = this.lineList.get(i).getStart();
-            end = this.lineList.get(i).getEnd();
-            for (MyLine myLine : this.lineList) {
+            start = lineList.get(i).getStart();
+            end = lineList.get(i).getEnd();
+            for (int iter = 0; iter < lineList.size(); iter++ ) {
 
-                if ((!start.equals(myLine.getStart())) && !start.equals(myLine.getEnd())) {
+                if ((!start.equals(lineList.get(iter).getStart())) && !start.equals(lineList.get(iter).getEnd())) {
 
-                    if ((!end.equals(myLine.getStart())) && !end.equals(myLine.getEnd())) {
+                    if ((!end.equals(lineList.get(iter).getStart())) && !end.equals(lineList.get(iter).getEnd())) {
 
-                        if (this.lineList.get(i).intersectLines(myLine)) {
+                        if (lineList.get(i).intersectLines(lineList.get(iter))) {
 
-                            this.lineList.get(i).getStart().setPrimaryPlaceValue(this.lineList.get(i).getStart().getPrimaryPlaceValue() + 1);
-                            this.lineList.get(i).getEnd().setPrimaryPlaceValue(this.lineList.get(i).getEnd().getPrimaryPlaceValue() + 1);
+                            lineList.get(i).getStart().setPrimaryPlaceValue(lineList.get(i).getStart().getPrimaryPlaceValue() + 1);
+                            lineList.get(i).getEnd().setPrimaryPlaceValue(lineList.get(i).getEnd().getPrimaryPlaceValue() + 1);
                         }
                     }
                 }
             }
         }
     }
+
+
+
+    //Calculates the secondary value for every point
+    private void calculatingSecondaryPlaceValues(){
+        Point point;
+        for (Point value : this.pointList) {
+            point = value;
+            for (MyLine myLine : this.lineList) {
+                if (point.equals(myLine.getStart())) {
+                    point.setSecondaryPlaceValue(point.getSecondaryPlaceValue() + myLine.getEnd().getPrimaryPlaceValue());
+                }
+                if (point.equals(myLine.getEnd())) {
+                    point.setSecondaryPlaceValue(point.getSecondaryPlaceValue() + myLine.getStart().getPrimaryPlaceValue());
+                }
+            }
+        }
+    }
+
 
     public void determinateCenter(){
         double x = 0, y = 0;
@@ -159,21 +198,6 @@ public class Graph {
         this.graphCenterY = y;
     }
 
-    //Calculates the secondary value for every point
-    private void calculatingSecondaryPlaceValues(){
-        Point point;
-        for (Point value : this.pointList) {
-            point = value;
-            for (MyLine myLine : this.lineList) {
-                if (point.equals(myLine.getStart())) {
-                    point.setSecondaryPlaceValue(point.getSecondaryPlaceValue() + myLine.getEnd().getPrimaryPlaceValue());
-                }
-                if (point.equals(myLine.getEnd())) {
-                    point.setSecondaryPlaceValue(point.getSecondaryPlaceValue() + myLine.getStart().getPrimaryPlaceValue());
-                }
-            }
-        }
-    }
 
 
     @Override
