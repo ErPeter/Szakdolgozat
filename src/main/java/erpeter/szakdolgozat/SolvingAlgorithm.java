@@ -69,7 +69,7 @@ public class SolvingAlgorithm {
 
                 } else {
 
-                    if (minWrongnessCircle + 0.4 < minWrongnessLine) {
+                    if (minWrongnessCircle + 1 < minWrongnessLine) {
                         replacePoint(this.worstPoint, this.circleOptions.get(placeIndexCircle).getXCoordinate(), this.circleOptions.get(placeIndexCircle).getYCoordinate());
                         solution.add(this.worstPoint);
                         System.out.println("circle");
@@ -119,15 +119,16 @@ public class SolvingAlgorithm {
 
     public void creatingPointsOnLine(Point start, Point end) {
         lineOptions.clear();
+        int divide = 15;
         double deltaX, deltaY;
-        deltaX = (start.getXCoordinate() - end.getXCoordinate()) / 80;
-        deltaY = (start.getYCoordinate() - end.getYCoordinate()) / 80;
+        deltaX = (start.getXCoordinate() - end.getXCoordinate()) / divide;
+        deltaY = (start.getYCoordinate() - end.getYCoordinate()) / divide;
 
         Point linePoint;
 
-        for (int i = 0; i < 80; i++) {
+        for (int i = 0; i < divide; i++) {
             linePoint = new Point(start.getXCoordinate() - (deltaX * i) + 0.4, start.getYCoordinate() - (deltaY * i) + 0.4);
-            if (i > 0 && i < 80) {
+            if (i > 0 && i < divide) {
                 this.lineOptions.add(linePoint);
             }
         }
@@ -198,6 +199,7 @@ public class SolvingAlgorithm {
             }
         }
     }
+
 
     public void replacePoint(Point point, double x, double y) {
         point.setCoordinates(x, y);

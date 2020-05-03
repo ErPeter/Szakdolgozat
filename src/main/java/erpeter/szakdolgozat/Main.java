@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -27,13 +28,20 @@ class NewStage {
         solve.creatingCirclePoints(graph);
         solve.solve();
 
+
         Line line;
         for (int i = 0; i < solve.getCurrentState().getLineList().size(); i++) {
             line = new Line(solve.getCurrentState().getLineList().get(i).getStart().getXCoordinate(),
-                    solve.getCurrentState().getLineList().get(i).getStart().getYCoordinate(),
+                    solve.getCurrentState().getLineList().get(i).getStart().getYCoordinate()+55,
                     solve.getCurrentState().getLineList().get(i).getEnd().getXCoordinate(),
-                    solve.getCurrentState().getLineList().get(i).getEnd().getYCoordinate());
+                    solve.getCurrentState().getLineList().get(i).getEnd().getYCoordinate()+55);
             group.getChildren().add(line);
+        }
+
+        Circle point;
+        for (int i = 0; i < solve.getCurrentState().getPointList().size(); i++){
+            point = new Circle(solve.getCurrentState().getPointList().get(i).getXCoordinate(),solve.getCurrentState().getPointList().get(i).getYCoordinate()+55, 3);
+            group.getChildren().add(point);
         }
 
         Scene scene = new Scene(group, 1000, 1000);
@@ -46,7 +54,7 @@ class NewStage {
 public class Main extends Application {
 
     @Getter
-    public int graph = 3;
+    public int graph = 15;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -65,6 +73,13 @@ public class Main extends Application {
                     graph.getLineList().get(i).getEnd().getXCoordinate(),
                     graph.getLineList().get(i).getEnd().getYCoordinate());
             root.getChildren().add(line);
+        }
+
+        Circle point;
+        for (int i = 0; i < graph.getPointList().size(); i++){
+            point = new Circle(graph.getPointList().get(i).getXCoordinate(),
+                    graph.getPointList().get(i).getYCoordinate(), 3);
+            root.getChildren().add(point);
         }
 
         Button button = new Button("Solve");
