@@ -4,7 +4,9 @@ package erpeter.szakdolgozat;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Point {
+import java.io.Serializable;
+
+public class Point implements Serializable {
     @Getter
     private double xCoordinate;
     @Getter

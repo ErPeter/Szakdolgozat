@@ -1,11 +1,14 @@
 package erpeter.szakdolgozat;
 
 import lombok.Data;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.*;
+
+;
 
 @Data
 public class SolvingAlgorithm {
@@ -29,6 +32,72 @@ public class SolvingAlgorithm {
         worstPointLines();
         this.bestPoint = this.worstPoint;
         findBestPoint();
+    }
+
+    public Graph solveWithA(){
+        Graph iniGraph = this.currentState;
+        ArrayList<Graph> openOptions = expend(iniGraph);;
+        ArrayList<Graph> closedOptions = new ArrayList<>();
+        int index = 0;
+        double sumCost = Double.MAX_VALUE;
+        if (this.currentState.getLineList().size() <= (3 * currentState.getPointList().size()) - 6) {
+            while (true){
+                for (int i = 0; i < openOptions.size(); i++){
+                    if(openOptions.get(i).getWrongness()+openOptions.get(i).getCost() < sumCost){
+//                        openOptions.get(i).print();
+                        sumCost = openOptions.get(i).getWrongness()+openOptions.get(i).getCost();
+                        index = i;
+                    }
+                }
+                if(sumCost == 0){
+                    break;
+                }else {
+                    openOptions.addAll(expend(openOptions.get(index)));
+                    closedOptions.add(openOptions.get(index));
+//                    System.out.println(closedOptions.size());
+                    openOptions.remove(index);
+                    sumCost = Double.MAX_VALUE;
+                }
+//                System.out.println(sumCost);
+            }
+        }
+        else {
+            System.out.println("You can not draw this graph on to a plane");
+        }
+
+        return openOptions.get(index);
+    }
+
+    public ArrayList<Graph> expend(Graph graph){
+        findWorstPoint();
+        ArrayList<Graph> expendedGraphs = new ArrayList<>();
+        Graph tempGraph = SerializationUtils.clone(graph);
+        findBestPoint();
+        creatingCirclePoints(graph);
+        creatingPointsOnLine(this.worstPoint, this.bestPoint);
+        for (int i = 0; i < this.lineOptions.size(); i++){
+            replacePoint(this.worstPoint, lineOptions.get(i).getXCoordinate(), lineOptions.get(i).getYCoordinate());
+            this.currentState.refreshWrongness();
+            Graph expGraph = SerializationUtils.clone(this.currentState);
+            expGraph.setCost(expGraph.getCost() + 1);
+            if(expGraph.getWrongness() == 0){
+                expGraph.setCost(0);
+            }
+            expendedGraphs.add(expGraph);
+        }
+        for (int i = 0; i < this.circleOptions.size(); i++) {
+            replacePoint(this.worstPoint, circleOptions.get(i).getXCoordinate(), circleOptions.get(i).getYCoordinate());
+            this.currentState.refreshWrongness();
+            Graph expGraph = SerializationUtils.clone(this.currentState);
+            expGraph.setCost(expGraph.getCost() + 2);
+            if(expGraph.getWrongness() == 0){
+                expGraph.setCost(0);
+            }
+            expendedGraphs.add(expGraph);
+        }
+        this.currentState = tempGraph;
+
+        return expendedGraphs;
     }
 
 
@@ -72,7 +141,7 @@ public class SolvingAlgorithm {
                     if (minWrongnessCircle + 1 < minWrongnessLine) {
                         replacePoint(this.worstPoint, this.circleOptions.get(placeIndexCircle).getXCoordinate(), this.circleOptions.get(placeIndexCircle).getYCoordinate());
                         solution.add(this.worstPoint);
-                        System.out.println("circle");
+//                        System.out.println("circle");
                     } else {
                         replacePoint(this.worstPoint, this.lineOptions.get(placeIndexLine).getXCoordinate(), this.lineOptions.get(placeIndexLine).getYCoordinate());
                         solution.add(this.worstPoint);
@@ -80,18 +149,19 @@ public class SolvingAlgorithm {
                 }
 
                 this.currentState.refreshWrongness();
-                System.out.println(this.currentState.getWrongness());
+                //System.out.println(this.currentState.getWrongness());
                 for (int i = 0; i < currentState.getPointList().size(); i++) {
-                    System.out.println(currentState.getPointList().get(i).getName() + ": " + currentState.getPointList().get(i).getPrimaryPlaceValue());
+                   // System.out.println(currentState.getPointList().get(i).getName() + ": " + currentState.getPointList().get(i).getPrimaryPlaceValue());
                 }
                 findWorstPoint();
-                System.out.println(this.worstPoint.getName());
+                //System.out.println(this.worstPoint.getName());
             }
-        } else System.out.println("You can not draw in this graph on to a plane");
+        } else System.out.println("You can not draw this graph on to a plane");
     }
 
 
     public void creatingCirclePoints(Graph currentStage) {
+        circleOptions.clear();
         currentStage.determinateCenter();
         Point circlePoint;
         int numberOfPoints = currentStage.getPointList().size();

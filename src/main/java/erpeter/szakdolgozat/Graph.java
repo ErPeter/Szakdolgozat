@@ -2,7 +2,7 @@ package erpeter.szakdolgozat;
 
 import lombok.Getter;
 import lombok.Setter;
-
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Graph {
+public class Graph implements Serializable {
 
     @Getter
     @Setter
@@ -20,6 +20,10 @@ public class Graph {
     @Getter
     @Setter
     private double wrongness;
+
+    @Getter
+    @Setter
+    private double cost = 0;
 
     private String points;
     private String line;
@@ -196,6 +200,15 @@ public class Graph {
 
         this.graphCenterX = x;
         this.graphCenterY = y;
+    }
+
+    public void print(){
+        for (int i = 0; i < pointList.size(); i++){
+            double x = pointList.get(i).getXCoordinate();
+            double y = pointList.get(i).getYCoordinate();
+            String name = pointList.get(i).getName();
+            System.out.println(name + ": " + x + ", " + y);
+        }
     }
 
 

@@ -2,11 +2,12 @@ package erpeter.szakdolgozat;
 import lombok.Data;
 
 import java.awt.geom.Line2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class MyLine {
+public class MyLine implements Serializable {
     private Point start;
     private Point end;
     private List<Point> intersections = new ArrayList<>();
